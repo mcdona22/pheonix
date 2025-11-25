@@ -51,7 +51,7 @@ tasks.named('test') {
     reports {
         junitXml.required = true
         html.outputLocation = layout.buildDirectory.dir('reports/html/unit-tests')
-//        junitXml.outputLocation = layout.buildDirectory.dir('reports/xml/unit-tests')
+        junitXml.outputLocation = layout.buildDirectory.dir('reports/xml/unit-tests')
     }
 }
 
