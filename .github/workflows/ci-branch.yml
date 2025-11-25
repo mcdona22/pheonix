@@ -48,8 +48,22 @@ jobs:
           # Based on your build.gradle, the output location for HTML is:
           path: build/reports/html/unit-tests/
           retention-days: 5
+
+      - name: Upload JaCoCo HTML Report Artifact
+        uses: actions/upload-artifact@v4
+        if: always() # Ensure upload happens even if tests fail
+        with:
+          name: Code_Coverage_HTML_Report # This is the name the zip file will have
+          path: build/reports/html/code-coverage/
+          retention-days: 5
+
+          
       - name: Add HTML Report Link to Summary
         run: |
           echo "### 📄 Unit Test Reports" >> $GITHUB_STEP_SUMMARY
           # This markdown automatically creates a link to the uploaded artifact's download page.
           echo "➡️ [Download Full HTML Report (zip)](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📊 Code Coverage Reports Available" >> $GITHUB_STEP_SUMMARY
+          echo "➡️ Download the **Code Coverage HTML Report** (a .zip file) from the Artifacts section below." >> $GITHUB_STEP_SUMMARY
+
