@@ -33,6 +33,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testImplementation "com.h2database:h2"
+    runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
@@ -69,27 +72,42 @@ jacoco {
     reportsDirectory = layout.buildDirectory.dir('reports/xml/code-coverage')
 }
 
-//tasks.register('integrationTest', Test) {
-//    // This tells the task to use the same setup as the default 'test' task
-//    testClassesDirs = sourceSets.test.output.classesDirs
-//    classpath = sourceSets.test.runtimeClasspath
-//
-//    // Include only tests with the 'integration' tag
-//    useJUnitPlatform {
-//        includeTags 'integration'
-//    }
-//    // Optional: Ensure the standard 'test' task excludes them if you want
-//    // the 'test' task to only run fast unit tests.
-//    // excludeTags 'integration'
-//}
+tasks.register('integrationTest', Test) {
+    // This tells the task to use the same setup as the default 'test' task
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
 
-//tasks.register('unitTest', Test) {
-//    testClassesDirs = sourceSets.test.output.classesDirs
-//    classpath = sourceSets.test.runtimeClasspath
-//
-//    useJUnitPlatform {
-//        excludeTags 'integration'
-//    }
-//}
+    // Include only tests with the 'integration' tag
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    // Optional: Ensure the standard 'test' task excludes them if you want
+    // the 'test' task to only run fast unit tests.
+    // excludeTags 'integration'
+}
+
+tasks.register('unitTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+tasks.named('bootRun') {
+    // Example 1: Use the 'dev' Spring Profile by default
+    systemProperty 'spring.profiles.active', 'dev'
+
+    // Example 2: Run the server on a custom port
+    systemProperty 'server.port', '9090'
+
+    // Example 3: Add extra JVM arguments (e.g., for debugging)
+    jvmArgs = [
+            // '-Xmx2048m', // Max memory
+            // '-Xdebug', // Enable remote debugging
+            // '-Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n'
+    ]
+}
 
 

@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+data/
+h2-2.4.240.jar
