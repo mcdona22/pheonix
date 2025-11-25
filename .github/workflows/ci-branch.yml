@@ -22,6 +22,12 @@ jobs:
       - name: Run commit tests
         run: ./gradlew test
 
+      - name: Publish test report to PR
+        uses: scacap/action-surefire-report@v1
+        with:
+          reports-path: '**/build/reports/xml/unit-tests/TEST-*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Install Tree Utility
         run: sudo apt-get install tree
