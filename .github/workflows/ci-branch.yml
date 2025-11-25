@@ -48,3 +48,8 @@ jobs:
           # Based on your build.gradle, the output location for HTML is:
           path: build/reports/html/unit-tests/
           retention-days: 5
+      - name: Add HTML Report Link to Summary
+        run: |
+          echo "### 📄 Unit Test Reports" >> $GITHUB_STEP_SUMMARY
+          # This markdown automatically creates a link to the uploaded artifact's download page.
+          echo "➡️ [Download Full HTML Report (zip)](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
