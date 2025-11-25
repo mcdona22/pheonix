@@ -22,15 +22,13 @@ jobs:
       - name: Run commit tests
         run: ./gradlew test
 
-      - name: Publish test report to PR
-        uses: scacap/action-surefire-report@v1
-        with:
-          report_paths: '**/build/reports/xml/unit-tests/TEST-*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-
       - name: Install Tree Utility
         run: sudo apt-get install tree
 
       - name: Show Full Build Directory Structure
         run: tree -L 4 build # Lists files 3 levels deep inside the build directory
+      - name: Publish test report to PR
+        uses: scacap/action-surefire-report@v1
+        with:
+          report_paths: '**/build/reports/xml/unit-tests/TEST-*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
