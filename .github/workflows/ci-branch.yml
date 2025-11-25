@@ -20,4 +20,4 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run commit tests
-        run: ./gradlew test
+        run: ./gradlew build test
