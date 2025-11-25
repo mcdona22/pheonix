@@ -21,3 +21,10 @@ jobs:
 
       - name: Run commit tests
         run: ./gradlew build test
+
+
+      - name: Install Tree Utility
+        run: sudo apt-get install tree
+
+      - name: Show Full Build Directory Structure
+        run: tree -L 3 build # Lists files 3 levels deep inside the build directory
