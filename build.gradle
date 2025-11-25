@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+
 }
 
 group = 'com.mcdona22'
@@ -13,6 +15,7 @@ java {
         languageVersion = JavaLanguageVersion.of(25)
     }
 }
+
 
 configurations {
     compileOnly {
@@ -39,12 +42,31 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation "org.mockito:mockito-core:5.+"
-    testImplementation "org.mockito:mockito-core:5.+"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+    reports {
+        junitXml.required = true
+        html.outputLocation = layout.buildDirectory.dir('reports/html/unit-tests')
+        junitXml.outputLocation = layout.buildDirectory.dir('reports/xml/unit-tests')
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/html/code-coverage')
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+    reportsDirectory = layout.buildDirectory.dir('reports/xml/code-coverage')
 }
 
 tasks.register('integrationTest', Test) {
@@ -69,3 +91,5 @@ tasks.register('unitTest', Test) {
         excludeTags 'integration'
     }
 }
+
+
