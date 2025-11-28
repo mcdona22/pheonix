@@ -20,7 +20,6 @@ public class AppUserService {
     private final Supplier<String> entityIdSupplier;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    //    @Transactional
     public AppUser createUser(CreateAppUserRequest dto) {
         final var id = entityIdSupplier.get();
         logger.info("User ID is {}", id);

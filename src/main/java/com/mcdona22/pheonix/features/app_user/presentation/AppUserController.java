@@ -24,12 +24,6 @@ public class AppUserController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-//    @GetMapping
-//    String index() {
-//        this.appUserService.createUser();
-//        return "here is the user endpoint";
-//    }
-
     @PostMapping
     ResponseEntity<@NonNull AppUser> createUser(@Valid @RequestBody CreateAppUserRequest request) {
         logger.info("Received request to create app user: {}", request);
