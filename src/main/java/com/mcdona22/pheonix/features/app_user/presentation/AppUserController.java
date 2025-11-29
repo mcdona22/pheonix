@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -35,12 +36,15 @@ public class AppUserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<@NonNull String> getUserById(@PathVariable("id") String id) {
+    public ResponseEntity<@NonNull AppUser> getUserById(@PathVariable("id") String id) {
         logger.info("Processing request to get app user by id: {}", id);
 
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                                                         .buildAndExpand(id).toUri();
-        final var body = "Simulated body: " + id;
-        return ResponseEntity.ok().body(body);
+
+        Optional<AppUser> optionalUser = appUserService.getUser(id);
+
+        return optionalUser.map(ResponseEntity::ok)
+                           .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
