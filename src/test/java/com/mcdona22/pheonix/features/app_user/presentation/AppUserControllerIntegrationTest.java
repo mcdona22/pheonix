@@ -62,7 +62,7 @@ public class AppUserControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Happy Path:  Create user with photoUrlMissing")
+    @DisplayName("Happy Path:  Create user with photoUrl Missing")
     public void testCreateUserWithPhotoUrlMissing() throws Exception {
         // setup
 //        dto = new CreateAppUserRequest(displayName, email);
