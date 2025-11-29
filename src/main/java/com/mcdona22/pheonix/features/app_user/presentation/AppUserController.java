@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -35,5 +32,15 @@ public class AppUserController {
                                                         .buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(location).body(user);
 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<@NonNull String> getUserById(@PathVariable("id") String id) {
+        logger.info("Processing request to get app user by id: {}", id);
+
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                                                        .buildAndExpand(id).toUri();
+        final var body = "Simulated body: " + id;
+        return ResponseEntity.ok().body(body);
     }
 }

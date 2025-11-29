@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 
@@ -37,5 +38,11 @@ public class AppUserService {
 
             throw new PheonixRuntimeException(error);
         }
+    }
+
+    public Optional<AppUser> getUser(String userId) {
+        logger.info("Search for app-user with id {}", userId);
+
+        return appUserRepository.findById(userId);
     }
 }
