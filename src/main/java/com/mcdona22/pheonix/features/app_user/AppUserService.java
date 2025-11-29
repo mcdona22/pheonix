@@ -1,12 +1,14 @@
 package com.mcdona22.pheonix.features.app_user;
 
 
+import com.mcdona22.pheonix.common.ApiError;
+import com.mcdona22.pheonix.common.PheonixRuntimeException;
 import com.mcdona22.pheonix.features.app_user.presentation.CreateAppUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Supplier;
 
@@ -18,17 +20,22 @@ public class AppUserService {
     private final Supplier<String> entityIdSupplier;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Transactional
     public AppUser createUser(CreateAppUserRequest dto) {
+        final var id = entityIdSupplier.get();
+        logger.info("User ID is {}", id);
+
+        var appUser = new AppUser(id, dto.displayName(), dto.email(), dto.photoURL());
         try {
-            final var id = entityIdSupplier.get();
-            var appUser = new AppUser(id, dto.displayName(), dto.email(), dto.photoURL());
-            logger.info("Creating user with id {}", id);
+            logger.info("Creating {}", appUser);
+
             appUserRepository.save(appUser);
             return appUser;
         } catch (Exception e) {
-            System.out.println("Error saving app user: " + e.getMessage());
-            throw e;
+            logger.info("In exception.  Logging only.  Could not create app user {}", id);
+            var message = "There was a problem saving " + appUser + " - " + e.getMessage();
+            var error = new ApiError(HttpStatus.BAD_REQUEST, "App User Save Error", message);
+
+            throw new PheonixRuntimeException(error);
         }
     }
 }

@@ -27,6 +27,7 @@ public class HelloControllerTest {
     @Test
     public void testServiceCalled() {
         final var expected = new HelloResponse("message", "version");
+
         when(mockService.getHelloResponse()).thenReturn(expected);
 
         final var actual = controller.index();

@@ -12,7 +12,11 @@ public record CreateAppUserRequest(
         @NotBlank(message = "Email is required")
         @Email(message = "Must be a valid email address")
         String email,
-
         String photoURL
 ) {
+    public CreateAppUserRequest(String displayName, String email, String photoURL) {
+        this.displayName = displayName;
+        this.email = email;
+        this.photoURL = photoURL == null ? "" : photoURL;
+    }
 }
