@@ -1,13 +1,26 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./data/pheonix-db
+    url: jdbc:h2:file:./data/pheonix-db;AUTO_SERVER=TRUE;MODE=PostgreSQL
     driver-class-name: org.h2.Driver
     username: sa
     password: password
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      # CRUCIAL: Show the SQL queries executed by Hibernate
+      hibernate.show_sql: true
+      # CRUCIAL: Format the SQL for readability
+      hibernate.format_sql: true
+      hibernate.type.descriptor.sql.BasicBinder: TRACE
+
   h2:
     console:
       path: /h2-console
-      enabled: true
+  logging:
+    level:
+      # CRUCIAL: Log all JDBC parameters (the actual 'ID' being searched for)
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicExtractor: TRACE
+      org.springframework.web:
+      DEBUG     enabled: true
