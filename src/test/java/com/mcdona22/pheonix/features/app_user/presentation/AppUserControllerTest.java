@@ -15,10 +15,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
@@ -78,4 +79,20 @@ public class AppUserControllerTest {
         assertEquals(dto.photoURL(), foundUser.getPhotoURL());
 
     }
+
+    @Test
+    @DisplayName("Happy Path : Get existing user")
+    public void testFetchUserWithID() {
+        // setup
+        final var userId = "ds8-8sd-2HJ2-BB12";
+        final var expectedUser = new AppUser(userId, "Display Name", "person@test.com", "photoURL");
+        when(mockService.getUser(userId)).thenReturn(Optional.of(expectedUser));
+        // act
+        var response = controller.getUserById(userId);
+
+        // compare
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
+        verify(mockService, times(1)).getUser(userId);
+    }
 }
+

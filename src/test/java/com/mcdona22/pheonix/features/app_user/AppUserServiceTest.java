@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class AppUserServiceTest {
-    final String expectedId = "ee33eHHDdsx90";
+    final String expectedId = "ee33-eHHD-dsx90";
     Logger logger = LoggerFactory.getLogger(this.getClass());
     private AppUserService appUserService;
     private CreateAppUserRequest dto;
@@ -35,7 +36,7 @@ public class AppUserServiceTest {
         appUserService = new AppUserService(mockRepository, mockIdSupplier);
         dto = new CreateAppUserRequest("TestDisplay", "test@test.com", "testUrl");
 
-        when(mockIdSupplier.get()).thenReturn(expectedId);
+        lenient().when(mockIdSupplier.get()).thenReturn(expectedId);
 
     }
 
@@ -73,6 +74,34 @@ public class AppUserServiceTest {
         assertTrue(caught.getError().getDebugMessage().contains(debugMsg),
                    "Doesn't contain message as expected"
                   );
+    }
+
+    @Test
+    @DisplayName("Happy Path - test when user exists")
+    public void testRetrieveFoundAppUser() {
+        // setup
+        final var mockUser = mock(AppUser.class);
+        when(mockRepository.findById(expectedId)).thenReturn(Optional.of(mockUser));
+        // act
+        final var result = appUserService.getUser(expectedId);
+        // compare
+        assertTrue(result.isPresent());
+        assertEquals(result.get(), mockUser);
+        verify(mockRepository, times(1)).findById(expectedId);
+    }
+
+    @Test
+    @DisplayName("Happy Path - Test when user doesn't exist")
+    public void testRetrieveNotFoundAppUser() {
+        // setup
+        when(mockRepository.findById(expectedId)).thenReturn(Optional.empty());
+
+        // act
+        final var result = appUserService.getUser(expectedId);
+
+        // compare
+        assertTrue(result.isEmpty());
+        verify(mockRepository, times(1)).findById(expectedId);
     }
 
 

@@ -1,5 +1,7 @@
 package com.mcdona22.pheonix.features.app_user.presentation;
 
+import com.mcdona22.pheonix.common.TestDatabaseSetup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import tools.jackson.databind.ObjectMapper;
+
+import java.sql.SQLException;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +34,14 @@ public class AppUserControllerIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private TestDatabaseSetup testDatabaseSetup;
+
+    @BeforeEach
+    public void setup() throws SQLException {
+        testDatabaseSetup.deleteAllUsers();
+
+    }
 
     @Test
     @DisplayName("Happy Path:  Create user with all fields specified")
@@ -65,7 +77,6 @@ public class AppUserControllerIntegrationTest {
     @DisplayName("Happy Path:  Create user with photoUrl Missing")
     public void testCreateUserWithPhotoUrlMissing() throws Exception {
         // setup
-//        dto = new CreateAppUserRequest(displayName, email);
         dto = CreateAppUserRequest.builder().displayName(displayName).email(email).build();
         // act
         var result = mockMvc
@@ -87,5 +98,54 @@ public class AppUserControllerIntegrationTest {
                                               .value(""));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.id")
                                               .exists());
+    }
+
+    @Test
+    @DisplayName("Happy Path: User Id not found")
+    public void testUserNotFound() throws Exception {
+        // setup - app-user is empty at this point
+        final var id = "test-id";
+        final var path = "/users/" + id;
+        // act
+        var result = mockMvc
+                .perform(MockMvcRequestBuilders
+                                 .get(path)
+                                 .accept(MediaType.APPLICATION_JSON));
+
+        // compare
+        result.andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @DisplayName("Happy Path: User exists and is retrieved")
+    public void testFetchWhenUserFound() throws Exception {
+        // setup
+        final var id = "test-id";
+        final var details = new CreateAppUserRequest(displayName, email, photoURL);
+        testDatabaseSetup.createAppUser(id, details.displayName(), details.email(),
+                                        details.photoURL()
+                                       );
+        final var path = "/users/" + id;
+        // act
+
+        var result = mockMvc
+                .perform(MockMvcRequestBuilders
+                                 .get(path)
+                                 .accept(MediaType.APPLICATION_JSON));
+
+
+        // compare
+        result.andExpect(status().isOk());
+        result.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.id")
+                                              .value(id));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.displayName")
+                                              .value(details.displayName()));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.email")
+                                              .value(details.email()));
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.photoURL")
+                                              .value(details.photoURL()));
+
     }
 }

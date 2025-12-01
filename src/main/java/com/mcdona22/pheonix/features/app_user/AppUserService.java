@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 
@@ -37,5 +39,12 @@ public class AppUserService {
 
             throw new PheonixRuntimeException(error);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<AppUser> getUser(String userId) {
+        logger.info("Search for app-user with id {}", userId);
+
+        return appUserRepository.findById(userId);
     }
 }
