@@ -101,6 +101,23 @@ public class AppUserControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Happy Path: User Id not found")
+    public void testUserNotFound() throws Exception {
+        // setup - app-user is empty at this point
+        final var id = "test-id";
+        final var path = "/users/" + id;
+        // act
+        var result = mockMvc
+                .perform(MockMvcRequestBuilders
+                                 .get(path)
+                                 .accept(MediaType.APPLICATION_JSON));
+
+        // compare
+        result.andExpect(status().isNotFound());
+
+    }
+
+    @Test
     @DisplayName("Happy Path: User exists and is retrieved")
     public void testFetchWhenUserFound() throws Exception {
         // setup
@@ -129,7 +146,6 @@ public class AppUserControllerIntegrationTest {
                                               .value(details.email()));
         result.andExpect(MockMvcResultMatchers.jsonPath("$.photoURL")
                                               .value(details.photoURL()));
-
 
     }
 }

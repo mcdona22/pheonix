@@ -45,11 +45,6 @@ public class AppUserService {
     public Optional<AppUser> getUser(String userId) {
         logger.info("Search for app-user with id {}", userId);
 
-        final var optionalUser = appUserRepository.findById(userId);
-        logger.info("optionalUser {}", optionalUser.getClass());
-        logger.info("App user exists: {}", optionalUser.isPresent());
-
-
-        return optionalUser;
+        return appUserRepository.findById(userId);
     }
 }

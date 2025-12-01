@@ -43,9 +43,7 @@ public class AppUserController {
                                                         .buildAndExpand(id).toUri();
 
         Optional<AppUser> optionalUser = appUserService.getUser(id);
-        logger.info("App user exists: {}", optionalUser.isPresent());
-//        logger.info("App user retrieved: {}", optionalUser);
-
+        
         return optionalUser.map(ResponseEntity::ok)
                            .orElseGet(() -> ResponseEntity.notFound().build());
     }
