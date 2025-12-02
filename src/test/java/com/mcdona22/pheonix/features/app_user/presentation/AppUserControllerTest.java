@@ -5,7 +5,8 @@ import com.mcdona22.pheonix.features.app_user.AppUserService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,9 +21,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @Tag("unit")
@@ -50,6 +53,13 @@ public class AppUserControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
     }
 
+    static Stream<Arguments> testArguments() {
+        return Stream.of(
+                arguments("No app users", 0),
+                arguments("One app users", 1),
+                arguments("Some app users", 5)
+                        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -85,6 +95,7 @@ public class AppUserControllerTest {
 
     }
 
+
     @Test
     @DisplayName("Happy Path : Get existing user")
     public void testFetchUserWithID() {
@@ -100,27 +111,32 @@ public class AppUserControllerTest {
         verify(mockService, times(1)).getUser(userId);
     }
 
-
-//    private Stream<Arguments> getTestUsers() {
-//        List<AppUser> hasZero = List.of();
-//        List<AppUser> hasOne = List.of(mock(AppUser.class));
-//        List<AppUser> hasMany = List.of(
-//                mock(AppUser.class),
-//                mock(AppUser.class),
-//                mock(AppUser.class)
-//                                       );
+//    @ParameterizedTest
+//    @ValueSource(ints = {0, 1, 5})
+//    @DisplayName("Happy Path: Find all for some, one, none users")
+//    public void testFindVariousNumberOfAppUsers(int itemCount) {
+//        // setup
+//        final var list = new ArrayList<AppUser>();
+//        for (var i = 0; i < itemCount; i++) {
+//            list.add(Mockito.mock(AppUser.class));
+//        }
+//        when(mockService.findAllUsers()).thenReturn(list);
 //
-//        return Stream.of(
-//                Arguments.of(hasZero, 0, "Zero Users Test"),
-//                Arguments.of(hasOne, 1, "One User Test"),
-//                Arguments.of(hasMany, 3, "Many Users Test")
-//                        );
+//        // act
+//        var response = controller.getAllUsers();
+//
+//        // compare
+//        verify(mockService, times(1)).findAllUsers();
+//        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
+//        assert response.getBody() != null;
+//        assertEquals(itemCount, response.getBody().size());
 //    }
 
-    @ParameterizedTest
-    @ValueSource(ints = {0, 1, 5})
+    @ParameterizedTest(name = "Happy Path: Get all scenario: {0}")
     @DisplayName("Happy Path: Find all for some, one, none users")
-    public void testFindVariousNumberOfAppUsers(int itemCount) {
+    @MethodSource("testArguments")
+    public void testWithParams(String name, int itemCount) {
+        logger.info("Scenario: '{}'", name);
         // setup
         final var list = new ArrayList<AppUser>();
         for (var i = 0; i < itemCount; i++) {
@@ -136,8 +152,7 @@ public class AppUserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
         assert response.getBody() != null;
         assertEquals(itemCount, response.getBody().size());
+
     }
-
-
 }
 
