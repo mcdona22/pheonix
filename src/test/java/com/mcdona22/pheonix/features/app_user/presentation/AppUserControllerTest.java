@@ -4,6 +4,8 @@ import com.mcdona22.pheonix.features.app_user.AppUser;
 import com.mcdona22.pheonix.features.app_user.AppUserService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +18,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ public class AppUserControllerTest {
         // This makes the static method 'fromCurrentRequest()' work in a unit test.
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
     }
+
 
     @BeforeEach
     void setUp() {
@@ -98,44 +100,28 @@ public class AppUserControllerTest {
         verify(mockService, times(1)).getUser(userId);
     }
 
-    @Test
-    @DisplayName("Happy Path: Find all for 0 users")
-    public void testFindAllWhenZeroExist() {
+
+//    private Stream<Arguments> getTestUsers() {
+//        List<AppUser> hasZero = List.of();
+//        List<AppUser> hasOne = List.of(mock(AppUser.class));
+//        List<AppUser> hasMany = List.of(
+//                mock(AppUser.class),
+//                mock(AppUser.class),
+//                mock(AppUser.class)
+//                                       );
+//
+//        return Stream.of(
+//                Arguments.of(hasZero, 0, "Zero Users Test"),
+//                Arguments.of(hasOne, 1, "One User Test"),
+//                Arguments.of(hasMany, 3, "Many Users Test")
+//                        );
+//    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 5})
+    @DisplayName("Happy Path: Find all for some, one, none users")
+    public void testFindVariousNumberOfAppUsers(int itemCount) {
         // setup
-        when(mockService.findAllUsers()).thenReturn(Collections.emptyList());
-
-        // act
-        var response = controller.getAllUsers();
-        // compare
-        verify(mockService, times(1)).findAllUsers();
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
-        assert response.getBody() != null;
-        assertEquals(0, response.getBody().size());
-    }
-
-    @Test
-    @DisplayName("Happy Path: Find all for 1 user")
-    public void testFindAllWhenOneExists() {
-        // setup
-        final var list = new ArrayList<AppUser>();
-        list.add(Mockito.mock(AppUser.class));
-        when(mockService.findAllUsers()).thenReturn(list);
-
-        // act
-        var response = controller.getAllUsers();
-
-        // compare
-        verify(mockService, times(1)).findAllUsers();
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
-        assert response.getBody() != null;
-        assertEquals(list.size(), response.getBody().size());
-    }
-
-    @Test
-    @DisplayName("Happy Path: Find all for some users")
-    public void testFindAllWhenManyExists() {
-        // setup
-        final var itemCount = 7;
         final var list = new ArrayList<AppUser>();
         for (var i = 0; i < itemCount; i++) {
             list.add(Mockito.mock(AppUser.class));
