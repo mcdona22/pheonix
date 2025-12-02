@@ -1,4 +1,8 @@
 spring:
+  mvc:
+    pathmatch:
+      trailing-slash: true
+      matching-strategy: ant_path_matcher
   datasource:
     url: jdbc:h2:file:./data/pheonix-db;AUTO_SERVER=TRUE;MODE=PostgreSQL
     driver-class-name: org.h2.Driver
@@ -19,9 +23,10 @@ spring:
       path: /h2-console
   logging:
     level:
+      root: DEBUG
       # CRUCIAL: Log all JDBC parameters (the actual 'ID' being searched for)
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicExtractor: TRACE
-      org.springframework.web:
+      org.springframework.web: TRACE
 
       enabled: true
