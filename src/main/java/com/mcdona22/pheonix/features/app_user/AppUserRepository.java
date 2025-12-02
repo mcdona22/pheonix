@@ -1,10 +1,11 @@
 package com.mcdona22.pheonix.features.app_user;
 
-import org.springframework.data.repository.CrudRepository;
+import lombok.NonNull;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AppUserRepository extends CrudRepository<AppUser, String> {
+public interface AppUserRepository extends JpaRepository<@NonNull AppUser, @NonNull String> {
 //    AppUser findByDisplayName(String displayName);
 //
 //    @NonNull

@@ -5,6 +5,7 @@ import com.mcdona22.pheonix.features.app_user.AppUserService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -94,5 +97,61 @@ public class AppUserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
         verify(mockService, times(1)).getUser(userId);
     }
+
+    @Test
+    @DisplayName("Happy Path: Find all for 0 users")
+    public void testFindAllWhenZeroExist() {
+        // setup
+        when(mockService.findAllUsers()).thenReturn(Collections.emptyList());
+
+        // act
+        var response = controller.getAllUsers();
+        // compare
+        verify(mockService, times(1)).findAllUsers();
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
+        assert response.getBody() != null;
+        assertEquals(0, response.getBody().size());
+    }
+
+    @Test
+    @DisplayName("Happy Path: Find all for 1 user")
+    public void testFindAllWhenOneExists() {
+        // setup
+        final var list = new ArrayList<AppUser>();
+        list.add(Mockito.mock(AppUser.class));
+        when(mockService.findAllUsers()).thenReturn(list);
+
+        // act
+        var response = controller.getAllUsers();
+
+        // compare
+        verify(mockService, times(1)).findAllUsers();
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
+        assert response.getBody() != null;
+        assertEquals(list.size(), response.getBody().size());
+    }
+
+    @Test
+    @DisplayName("Happy Path: Find all for some users")
+    public void testFindAllWhenManyExists() {
+        // setup
+        final var itemCount = 7;
+        final var list = new ArrayList<AppUser>();
+        for (var i = 0; i < itemCount; i++) {
+            list.add(Mockito.mock(AppUser.class));
+        }
+        when(mockService.findAllUsers()).thenReturn(list);
+
+        // act
+        var response = controller.getAllUsers();
+
+        // compare
+        verify(mockService, times(1)).findAllUsers();
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "This should be OK");
+        assert response.getBody() != null;
+        assertEquals(itemCount, response.getBody().size());
+    }
+
+
 }
 

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +41,8 @@ public class AppUserController {
         logger.info("Received request to get all users");
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("")
                                                         .buildAndExpand().toUri();
-        final var users = new ArrayList<AppUser>();
-        return ResponseEntity.created(location).body(users);
+        final var users = appUserService.findAllUsers();
+        return ResponseEntity.ok().location(location).body(users);
     }
 
     @GetMapping("/{id}")
