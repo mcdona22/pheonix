@@ -67,6 +67,17 @@ tasks.named('test') {
     }
 }
 
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.75
+            }
+        }
+    }
+}
+
 jacocoTestReport {
     dependsOn test
     afterEvaluate {
@@ -79,6 +90,7 @@ jacocoTestReport {
             ])
         }))
     }
+
     reports {
         xml.required = true
         csv.required = false
