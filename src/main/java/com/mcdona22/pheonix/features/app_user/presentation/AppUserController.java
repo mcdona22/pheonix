@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -35,6 +36,15 @@ public class AppUserController {
 
     }
 
+    @GetMapping
+    public ResponseEntity<@NonNull List<AppUser>> getAllUsers() {
+        logger.info("Received request to get all users");
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("")
+                                                        .buildAndExpand().toUri();
+        final var users = appUserService.findAllUsers();
+        return ResponseEntity.ok().location(location).body(users);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull AppUser> getUserById(@PathVariable("id") String id) {
         logger.info("Processing request to get app user by id: {}", id);
@@ -43,7 +53,7 @@ public class AppUserController {
                                                         .buildAndExpand(id).toUri();
 
         Optional<AppUser> optionalUser = appUserService.getUser(id);
-        
+
         return optionalUser.map(ResponseEntity::ok)
                            .orElseGet(() -> ResponseEntity.notFound().build());
     }
