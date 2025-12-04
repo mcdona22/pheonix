@@ -69,11 +69,22 @@ tasks.named('test') {
 
 jacocoTestReport {
     dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/*Application.*",
+                    "**/common/**",
+                    "com/baeldung/**/ExcludedPOJO.class",
+                    "**/config/*"
+            ])
+        }))
+    }
     reports {
         xml.required = true
         csv.required = false
         html.outputLocation = layout.buildDirectory.dir('reports/html/code-coverage')
     }
+
 }
 
 jacoco {
