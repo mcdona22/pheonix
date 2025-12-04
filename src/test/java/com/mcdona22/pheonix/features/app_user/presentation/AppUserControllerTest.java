@@ -53,14 +53,6 @@ public class AppUserControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockRequest));
     }
 
-    static Stream<Arguments> testArguments() {
-        return Stream.of(
-                arguments("No app users", 0),
-                arguments("One app users", 1),
-                arguments("Some app users", 5)
-                        );
-    }
-
     @BeforeEach
     void setUp() {
         controller = new AppUserController(mockService);
@@ -131,6 +123,14 @@ public class AppUserControllerTest {
 //        assert response.getBody() != null;
 //        assertEquals(itemCount, response.getBody().size());
 //    }
+
+    static Stream<Arguments> testArguments() {
+        return Stream.of(
+                arguments("No app users", 0),
+                arguments("One app users", 1),
+                arguments("Some app users", 5)
+                        );
+    }
 
     @ParameterizedTest(name = "Happy Path: Get all scenario: {0}")
     @DisplayName("Happy Path: Find all for some, one, none users")
